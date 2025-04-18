@@ -25,9 +25,10 @@
       perSystem = {pkgs, ...}: {
         devshells.default = {
           packages = builtins.attrValues {
-            inherit(pkgs)
-            uv
-            ;
+            inherit
+              (pkgs)
+              uv
+              ;
           };
         };
 
