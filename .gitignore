@@ -1,3 +1,6 @@
 dataset/
 models/
 *.mkv
+.venv
+**/.DS_Store
+**/.direnv
