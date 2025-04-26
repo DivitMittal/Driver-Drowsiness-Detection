@@ -1,0 +1,380 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Driver Drowsiness Detection</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/reveal.js@4/dist/reset.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/reveal.js@4/dist/reveal.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/reveal.js@4/dist/theme/black.css"
+      id="theme"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/reveal.js@4/plugin/highlight/monokai.css"
+    />
+    <style>
+      .reveal section p,
+      li {
+        display: inline-block;
+        font-size: 0.6em;
+        line-height: 1.2em;
+        vertical-align: top;
+      }
+      .reveal .slides {
+        text-align: left;
+      }
+      .reveal h1,
+      .reveal h2,
+      .reveal h3 {
+        text-transform: none;
+      }
+      .reveal pre {
+        width: 100%;
+        box-shadow: none;
+      }
+      .reveal code {
+        font-size: 0.9em;
+      }
+      .reveal strong {
+        color: #42affa;
+      }
+      .reveal ul {
+        margin-left: 1em;
+      }
+      .center {
+        text-align: center;
+      }
+      .diagram {
+        display: block;
+        margin: 0 auto;
+        max-width: 80%;
+        max-height: 60vh;
+      }
+      .note {
+        font-style: italic;
+        font-size: 0.8em;
+        color: #999;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section>
+          <h1>Project Presentation</h1>
+          <h2>Driver Drowsiness Detection</h2>
+          <p class="center">
+            <small>
+              Divit Mittal(229309249)<br />
+              Date: April 26, 2025
+            </small>
+          </p>
+        </section>
+
+        <section>
+          <h2>Introduction</h2>
+          <p>
+            Road safety is significantly impacted by driver fatigue, making
+            drowsiness detection a critical area of research and development.
+          </p>
+          <ul>
+            <li>
+              <strong>Project Goal:</strong> Implement a
+              <strong>Driver Drowsiness Detection</strong> system.
+            </li>
+            <li>
+              <strong>Core Technology:</strong>
+              <strong>Siamese Neural Networks</strong> for similarity learning.
+            </li>
+            <li>
+              <strong>Mechanism:</strong> Compare real-time facial features
+              against baseline states.
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Introduction: Fatigue Indicators</h2>
+          <p>The system analyzes multiple indicators of fatigue:</p>
+          <ul>
+            <li>
+              <strong>Eye State:</strong> Prolonged closures, rapid blinking.
+            </li>
+            <li><strong>Head Pose:</strong> Nodding, slumping.</li>
+            <li><strong>Mouth Movements:</strong> Yawning.</li>
+          </ul>
+          <p>
+            Integrated analysis aims for timely warnings to enhance driver
+            safety.
+          </p>
+        </section>
+
+        <section>
+          <h2>Features</h2>
+          <p>Key functionalities:</p>
+          <ul>
+            <li>
+              <strong>Real-Time Detection:</strong> Continuous monitoring via
+              camera.
+            </li>
+            <li>
+              <strong>Eye Aspect Ratio (EAR) Analysis:</strong>
+              <em>(Potential/Planned Feature)</em> Quantitative measure of eye
+              openness.
+            </li>
+            <li>
+              <strong>Head Pose Estimation:</strong>
+              <em>(Details TBD)</em> Detects nodding/tilting.
+            </li>
+            <li>
+              <strong>Mouth/Yawning Detection:</strong> Identifies yawn
+              characteristics.
+            </li>
+            <li>
+              <strong>Siamese Network Core:</strong> Compares image pairs (e.g.,
+              current vs. baseline) for state changes.
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Technologies Used</h2>
+          <ul>
+            <li><strong>Python:</strong> 3.8+</li>
+            <li>
+              <strong>Tensorflow (2.17.0) & Keras (3.6.0):</strong> Core deep
+              learning.
+            </li>
+            <li><strong>OpenCV:</strong> Camera access, image manipulation.</li>
+            <li>
+              <strong>Dlib:</strong> <em>(Inferred)</em> Facial landmark
+              detection.
+            </li>
+            <li>
+              <strong>Imutils:</strong> <em>(Inferred)</em> Image processing
+              utilities.
+            </li>
+            <li><strong>Numpy:</strong> Numerical operations.</li>
+            <li><strong>Matplotlib:</strong> Data visualization.</li>
+            <li><strong>OS module:</strong> Path/directory operations.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Project Structure</h2>
+          <pre><code class="language-plaintext">
+.
+├── .editorconfig
+├── .envrc
+├── .gitattributes
+├── .gitignore
+├── deep learning report.docx
+├── flake.lock
+├── flake.nix
+├── LICENSE
+├── pyproject.toml
+├── README.md
+├── siamese_network.ipynb
+├── uv.lock
+├── docs/
+│   ├── project_report.adoc  <-- This file
+│   ├── project_report.pdf
+│   ├── data-pipeline.png  <- Generated Graph
+│   └── model-architecture.png <- Generated Graph
+└── haarcascade/
+    ├── haarcascade_eye.xml
+    └── haarcascade_frontalface_default.xml
+        </code></pre>
+          <p class="note">Note: <code>dataset</code> directory is missing.</p>
+        </section>
+
+        <section>
+          <h2>Data Processing: Overview</h2>
+          <ul>
+            <li>
+              <strong>Siamese Network Requirement:</strong> Paired images
+              (similar/dissimilar).
+            </li>
+            <li><strong>Datasets:</strong> Eye state, Yawning detection.</li>
+            <li>
+              <strong>Structure:</strong> Anchor, Positive (similar), Negative
+              (dissimilar) samples.
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Data Processing: Paths & Setup</h2>
+          <p>Required directory structure (under <code>dataset/</code>):</p>
+          <ul>
+            <li>
+              <strong>Eyes Dataset:</strong>
+              <ul>
+                <li><code>eyes/anchor/</code></li>
+                <li><code>eyes/positive/</code></li>
+                <li><code>eyes/negative/</code></li>
+              </ul>
+            </li>
+            <li>
+              <strong>Yawn Dataset:</strong>
+              <ul>
+                <li><code>yawn/anchor/</code></li>
+                <li><code>yawn/positive/</code></li>
+                <li><code>yawn/negative/</code></li>
+              </ul>
+            </li>
+          </ul>
+          <p class="note">
+            Important: <code>dataset</code> directory needs to be populated
+            externally.
+          </p>
+        </section>
+
+        <section>
+          <h2>Data Processing: Preprocessing Pipeline</h2>
+          <p>TensorFlow (<code>tf.data</code>) pipeline steps:</p>
+          <ol>
+            <li>List Files (<code>.jpg</code>)</li>
+            <li>Read Files</li>
+            <li>Decode JPEG</li>
+            <li>Resize (105x105)</li>
+            <li>Normalize (0-1)</li>
+            <li>Pair & Label (Anchor/Positive=1, Anchor/Negative=0)</li>
+            <li>Concatenate Pairs</li>
+            <li>Cache</li>
+            <li>Shuffle</li>
+            <li>Train/Test Split (70/30)</li>
+            <li>Batch (Size 16)</li>
+            <li>Prefetch</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2>Data Processing: Pipeline Diagram</h2>
+          <p>This diagram illustrates the data flow:</p>
+          <img
+            src="../data-pipeline.png"
+            alt="Data Pipeline Diagram"
+            class="diagram"
+          />
+        </section>
+
+        <section>
+          <h2>Model Architecture: Siamese Network</h2>
+          <ul>
+            <li>
+              <strong>Purpose:</strong> Similarity comparison (e.g., same state
+              or different state).
+            </li>
+            <li>
+              <strong>Core:</strong> Shared CNN acts as an
+              <strong>embedding generator</strong>.
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Model Architecture: Embedding Network (CNN)</h2>
+          <ul>
+            <li><strong>Input:</strong> Image (105x105x3)</li>
+            <li><strong>Output:</strong> Embedding Vector (4096 dimensions)</li>
+            <li>
+              <strong>Key:</strong> <strong>Shared weights</strong> for both
+              images in a pair.
+            </li>
+          </ul>
+          <p>Architecture:</p>
+          <ul>
+            <li>Conv Block 1 (64 filters, 10x10) -> MaxPool</li>
+            <li>Conv Block 2 (128 filters, 7x7) -> MaxPool</li>
+            <li>Conv Block 3 (128 filters, 4x4) -> MaxPool</li>
+            <li>Conv Block 4 (256 filters, 4x4)</li>
+            <li>Flatten</li>
+            <li>Dense (4096 units, Sigmoid) -> Embedding</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Model Architecture: Siamese Structure</h2>
+          <ol>
+            <li>
+              <strong>Inputs:</strong> <code>input_image</code> (A),
+              <code>validation_image</code> (B).
+            </li>
+            <li>
+              <strong>Embedding:</strong> Both A & B pass through the
+              <strong>shared</strong> Embedding Network -> Emb(A), Emb(B).
+            </li>
+            <li>
+              <strong>Distance:</strong> <code>L1Dist</code> layer calculates
+              |Emb(A) - Emb(B)|.
+            </li>
+            <li>
+              <strong>Classifier:</strong> Dense layer (1 unit, Sigmoid)
+              predicts similarity (0-1).
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h2>Model Architecture: Diagram</h2>
+          <div align="center">
+            <img
+              src="../model-architecture.png"
+              alt="Model Architecture Diagram"
+              height="500"
+              class="diagram"
+            />
+          </div>
+        </section>
+
+        <section>
+          <h2>Training Configuration</h2>
+          <ul>
+            <li>
+              <strong>Optimizer:</strong> Adam (learning rate <code>1e-4</code>)
+            </li>
+            <li><strong>Loss Function:</strong> Binary Crossentropy</li>
+            <li>
+              <strong>Training Loop:</strong> Custom
+              <code>@tf.function</code> loop (<code>train_step</code>)
+            </li>
+            <li>
+              <strong>Epochs:</strong> Iterates, uses <code>Progbar</code> for
+              progress.
+            </li>
+            <li>
+              <strong>Checkpoints:</strong> Saves model state every 4 epochs
+              (<code>./training_checkpoints</code>).
+            </li>
+          </ul>
+        </section>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4/plugin/zoom/zoom.js"></script>
+    <script>
+      Reveal.initialize({
+        hash: true,
+        transition: "slide",
+        slideNumber: true,
+        plugins: [RevealHighlight, RevealNotes, RevealZoom],
+      });
+    </script>
+  </body>
+</html>

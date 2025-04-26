@@ -1,0 +1,261 @@
+= Project Presentation: Driver Drowsiness Detection
+:icons: font
+:source-highlighter: rouge
+:backend: revealjs
+:revealjsdir: https://cdn.jsdelivr.net/npm/reveal.js@4/dist
+:revealjs_theme: black
+:revealjs_transition: slide
+:imagesdir: .
+
+[.text-center]
+*Divit Mittal:* 229309249+
+*Date:* {docdate}
+
+== Introduction
+
+Road safety is significantly impacted by driver fatigue, making drowsiness detection a critical area of research and development.
+
+* *Project Goal:* Implement a *Driver Drowsiness Detection* system.
+* *Core Technology:* *Siamese Neural Networks* for similarity learning.
+* *Mechanism:* Compare real-time facial features against baseline states.
+
+== Introduction: Fatigue Indicators
+
+The system analyzes multiple indicators of fatigue:
+
+* *Eye State:* Prolonged closures, rapid blinking.
+* *Head Pose:* Nodding, slumping.
+* *Mouth Movements:* Yawning.
+
+Integrated analysis aims for timely warnings to enhance driver safety.
+
+== Features
+
+Key functionalities:
+
+* *Real-Time Detection:* Continuous monitoring via camera.
+* *Eye Aspect Ratio (EAR) Analysis:* _(Potential/Planned Feature)_ Quantitative measure of eye openness.
+* *Head Pose Estimation:* _(Details TBD)_ Detects nodding/tilting.
+* *Mouth/Yawning Detection:* Identifies yawn characteristics.
+* *Siamese Network Core:* Compares image pairs (e.g., current vs. baseline) for state changes.
+
+== Technologies Used
+
+* *Python:* 3.8+
+* *Tensorflow (2.17.0) & Keras (3.6.0):* Core deep learning.
+* *OpenCV:* Camera access, image manipulation.
+* *Dlib:* _(Inferred)_ Facial landmark detection.
+* *Imutils:* _(Inferred)_ Image processing utilities.
+* *Numpy:* Numerical operations.
+* *Matplotlib:* Data visualization.
+* *OS module:* Path/directory operations.
+
+== Project Structure
+
+[source,text]
+----
+.
+├── .editorconfig
+├── .envrc
+├── .gitattributes
+├── .gitignore
+├── deep learning report.docx
+├── flake.lock
+├── flake.nix
+├── LICENSE
+├── pyproject.toml
+├── README.md
+├── siamese_network.ipynb
+├── uv.lock
+├── docs/
+│   ├── project_report.adoc  <-- This file
+│   ├── project_report.pdf
+│   ├── data-pipeline.png  <- Generated Graph
+│   └── model-architecture.png <- Generated Graph
+└── haarcascade/
+    ├── haarcascade_eye.xml
+    └── haarcascade_frontalface_default.xml
+----
+_Note:_ `dataset` directory is missing.
+
+== Data Processing: Overview
+
+* *Siamese Network Requirement:* Paired images (similar/dissimilar).
+* *Datasets:* Eye state, Yawning detection.
+* *Structure:* Anchor, Positive (similar), Negative (dissimilar) samples.
+
+== Data Processing: Paths & Setup
+
+Required directory structure (under `dataset/`):
+
+* *Eyes Dataset:*
+** `eyes/anchor/`
+** `eyes/positive/`
+** `eyes/negative/`
+* *Yawn Dataset:*
+** `yawn/anchor/`
+** `yawn/positive/`
+** `yawn/negative/`
+
+_Important:_ `dataset` directory needs to be populated externally.
+
+== Data Processing: Preprocessing Pipeline
+
+TensorFlow (`tf.data`) pipeline steps:
+
+. List Files (`.jpg`)
+. Read Files
+. Decode JPEG
+. Resize (105x105)
+. Normalize (0-1)
+. Pair & Label (Anchor/Positive=1, Anchor/Negative=0)
+. Concatenate Pairs
+. Cache
+. Shuffle
+. Train/Test Split (70/30)
+. Batch (Size 16)
+. Prefetch
+
+== Data Processing: Pipeline Diagram
+
+This diagram illustrates the data flow:
+
+[graphviz, data-pipeline, png]
+----
+digraph DataPipeline {
+  rankdir=LR;
+  node [shape=box, style=rounded];
+  edge [arrowhead=vee];
+
+  subgraph cluster_paths {
+    label = "Image Paths";
+    style=filled;
+    color=lightgrey;
+    node [style=filled, color=white];
+    anchor_path [label="Anchor Images"];
+    positive_path [label="Positive Images"];
+    negative_path [label="Negative Images"];
+  }
+
+  subgraph cluster_tfdata {
+    label = "TensorFlow Data Pipeline";
+    node [style=filled, color=lightblue];
+
+    list_files [label="List Files\n(tf.data.Dataset)"];
+    preprocess [label="Read & Preprocess\n(Resize 105x105, Normalize)"];
+    zip_pos [label="Zip Positive Pairs\n(Anchor, Positive, Label=1)"];
+    zip_neg [label="Zip Negative Pairs\n(Anchor, Negative, Label=0)"];
+    concatenate [label="Concatenate"];
+    cache_shuffle [label="Cache & Shuffle"];
+    split [label="Split (70/30)"];
+    batch_prefetch_train [label="Batch & Prefetch (Train)"];
+    batch_prefetch_test [label="Batch & Prefetch (Test)"];
+
+    list_files -> preprocess;
+    preprocess -> zip_pos;
+    preprocess -> zip_neg;
+    zip_pos -> concatenate;
+    zip_neg -> concatenate;
+    concatenate -> cache_shuffle;
+    cache_shuffle -> split;
+    split -> batch_prefetch_train [label="Train Data"];
+    split -> batch_prefetch_test [label="Test Data"];
+  }
+
+  anchor_path -> list_files;
+  positive_path -> list_files;
+  negative_path -> list_files;
+
+  batch_prefetch_train -> "Training Loader";
+  batch_prefetch_test -> "Testing Loader";
+
+  "Training Loader" [shape=ellipse, style=filled, color=lightgreen];
+  "Testing Loader" [shape=ellipse, style=filled, color=lightcoral];
+}
+----
+
+== Model Architecture: Siamese Network
+
+* *Purpose:* Similarity comparison (e.g., same state or different state).
+* *Core:* Shared CNN acts as an *embedding generator*.
+
+== Model Architecture: Embedding Network (CNN)
+
+* *Input:* Image (105x105x3)
+* *Output:* Embedding Vector (4096 dimensions)
+* *Key:* *Shared weights* for both images in a pair.
+
+Architecture:
+
+* Conv Block 1 (64 filters, 10x10) -> MaxPool
+* Conv Block 2 (128 filters, 7x7) -> MaxPool
+* Conv Block 3 (128 filters, 4x4) -> MaxPool
+* Conv Block 4 (256 filters, 4x4)
+* Flatten
+* Dense (4096 units, Sigmoid) -> Embedding
+
+== Model Architecture: Siamese Structure
+
+. *Inputs:* `input_image` (A), `validation_image` (B).
+. *Embedding:* Both A & B pass through the *shared* Embedding Network -> Emb(A), Emb(B).
+. *Distance:* `L1Dist` layer calculates |Emb(A) - Emb(B)|.
+. *Classifier:* Dense layer (1 unit, Sigmoid) predicts similarity (0-1).
+
+== Model Architecture: Diagram
+
+Visualizing the Siamese Network flow:
+
+[graphviz, model-architecture, png]
+----
+digraph SiameseNetwork {
+  rankdir=TB;
+  node [shape=record, style=rounded];
+
+  subgraph cluster_embedding {
+    label = "Shared Embedding Network (CNN)";
+    style=filled;
+    color=lightgrey;
+    node [style=filled, color=white];
+    emb_input [label="{Input\n(105x105x3)}"];
+    conv1 [label="{Conv2D (64, 10x10, ReLU)\nMaxPool2D (2x2)}"];
+    conv2 [label="{Conv2D (128, 7x7, ReLU)\nMaxPool2D (2x2)}"];
+    conv3 [label="{Conv2D (128, 4x4, ReLU)\nMaxPool2D (2x2)}"];
+    conv4 [label="{Conv2D (256, 4x4, ReLU)}"];
+    flatten [label="Flatten"];
+    dense_emb [label="{Dense (4096, Sigmoid)\nEmbedding Vector}"];
+
+    emb_input -> conv1 -> conv2 -> conv3 -> conv4 -> flatten -> dense_emb;
+  }
+
+  input_img [label="Input Image (A)"];
+  val_img [label="Validation Image (B)"];
+
+  l1_dist [label="{L1 Distance Layer\nCalculates |Emb(A) - Emb(B)|}", shape=box, style=filled, color=lightblue];
+  classifier [label="{Classifier (Dense Layer)\nOutput: Similarity Probability (0-1)}", shape=box, style=filled, color=lightgreen];
+
+  input_img -> emb_input [style=dashed, arrowhead=none, label="Pass through Embedding Net"];
+  val_img -> emb_input [style=dashed, arrowhead=none, label="Pass through Embedding Net"];
+
+  dense_emb -> l1_dist [label="Embedding A"];
+  dense_emb -> l1_dist [label="Embedding B"];
+  l1_dist -> classifier;
+}
+----
+
+== Training Configuration
+
+* *Optimizer:* Adam (learning rate `1e-4`)
+* *Loss Function:* Binary Crossentropy
+* *Training Loop:* Custom `@tf.function` loop (`train_step`)
+* *Epochs:* Iterates, uses `Progbar` for progress.
+* *Checkpoints:* Saves model state every 4 epochs (`./training_checkpoints`).
+
+== Current Status & Potential Issues
+
+*Notebook (`siamese_network.ipynb`) shows:*
+
+. *`TypeError` in `L1Dist` Layer:* Inputs are `list` not `Tensor`. Needs fix in model definition.
+. *`NameError` for `siam`:* Model (`siam`) not defined due to TypeError.
+. *Missing Dataset:* `dataset/` directory needs to be created and populated.
+
+*Conclusion:* Blueprint exists, but requires debugging and data setup for training.
