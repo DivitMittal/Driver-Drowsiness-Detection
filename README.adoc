@@ -1,0 +1,55 @@
+= Driver Drowsiness Detection System
+:toc: left
+:toclevels: 3
+:sectlinks:
+:icons: font
+:source-highlighter: rouge
+:imagesdir: assets
+
+== Overview
+
+Driver fatigue represents a significant risk factor in vehicular accidents globally. This project implements a real-time **Driver Drowsiness Detection** system designed to mitigate this risk by leveraging advanced computer vision techniques and deep learning, specifically employing **Siamese Neural Networks**. The system performs continuous monitoring of the driver's facial region via a standard camera feed, analyzing key physiological indicators associated with drowsiness to provide timely alerts.
+
+== Core Functionality and Features
+
+The system integrates several detection modules based on facial feature analysis:
+
+*   **Real-Time Facial Monitoring:** Continuously captures and processes video frames from a camera pointed at the driver.
+*   **Eye State Analysis (EAR):** Calculates the Eye Aspect Ratio (EAR), a metric derived from facial landmarks representing the ratio of eye height to width. Prolonged periods of low EAR (indicating closed eyes) are a primary indicator of microsleep or drowsiness.
++
+image::eye.jpg[Sample Eye Detection, width=300]
+
+*   **Head Pose Estimation:** Monitors the orientation and movement of the driver's head. Significant deviations, such as head nodding (pitch changes) or slumping (roll/yaw changes), are correlated with reduced alertness. (Note: Specific implementation details may vary).
+*   **Mouth State Analysis (Yawning Detection):** Analyzes the mouth region to detect yawning events based on characteristic shape changes and duration. Yawning is a well-established physiological response to fatigue.
++
+image::yawn.jpg[Sample Yawn Detection, width=300]
+
+*   **Siamese Neural Network Integration:** The core innovation lies in utilizing a Siamese Neural Network architecture. Unlike traditional classifiers that operate on single inputs, Siamese networks learn a similarity metric by comparing pairs of inputs (e.g., a current frame vs. a baseline 'alert' frame, an open eye vs. a closed eye). This architecture excels at detecting subtle state changes indicative of increasing drowsiness across the monitored features (eyes, head, mouth).
+
+== System Architecture and Data Flow
+
+=== Data Processing Pipeline
+
+Effective training of the Siamese network necessitates a structured data preprocessing pipeline. This pipeline transforms raw image data into appropriately formatted pairs (anchor, positive, negative) for similarity learning.
+
+.Data Processing Pipeline Diagram
+image::data-pipeline.png[Data Pipeline Diagram, align=center]
+
+=== Siamese Model Architecture
+
+The Siamese network employs two identical sub-networks (sharing weights) to process input image pairs. The outputs (embeddings) are then compared using a distance metric to determine similarity.
+
+.Siamese Model Architecture Diagram
+image::model-architecture.png[Siamese Model Architecture Diagram, align=center]
+
+== Core Technologies Utilized
+
+The implementation relies on a standard stack for computer vision and deep learning tasks:
+
+*   **Python:** Version 3.8 or higher recommended. The primary programming language.
+*   **TensorFlow & Keras:** Foundational deep learning frameworks (e.g., TF 2.17.0, Keras 3.6.0 used in development) for constructing, training, and deploying the Siamese Neural Network.
+*   **OpenCV (Open Source Computer Vision Library):** Essential for real-time image acquisition (camera interface), preprocessing, and potentially basic feature extraction tasks.
+*   **Dlib:** A powerful C++ library with Python bindings, often employed for high-performance facial landmark detection, crucial for isolating eye, mouth, and head regions.
+*   **Imutils:** A collection of convenience functions built on top of OpenCV, simplifying common image processing operations like resizing, rotation, and skeletonization.
+*   **Numpy:** The fundamental package for numerical computation in Python, indispensable for array manipulations inherent in image data and deep learning tensors.
+*   **Matplotlib:** Standard Python library for generating static, animated, and interactive visualizations, useful for displaying sample data or training progress.
