@@ -1,6 +1,15 @@
-dataset/
-models/
-*.mkv
-.venv
 **/.DS_Store
 **/.direnv
+
+## dataset (can be fetched from kaggle)
+dataset/
+## pre-trained models
+models/
+## Video presentation
+*.mkv
+## Python virtual environment
+.venv
+## RevealJS directory
+**/reveal*
+## Asciidoctor
+**/.asciidoc*
