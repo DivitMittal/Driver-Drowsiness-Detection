@@ -1,0 +1,34 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "Driver Drowsiness Detection System"
+version: 0.1.0
+date-released: 2025-11-12
+authors:
+  - family-names: "Mittal"
+    given-names: "Divit"
+    email: "64.69.76.69.74.m@gmail.com"
+repository-code: "https://github.com/DivitMittal/Driver-Drowsiness-Detection"
+url: "https://github.com/DivitMittal/Driver-Drowsiness-Detection"
+abstract: >-
+  A real-time Driver Drowsiness Detection system that mitigates vehicular
+  accident risks by leveraging advanced computer vision techniques and deep
+  learning, specifically employing Siamese Neural Networks. The system performs
+  continuous monitoring of the driver's facial region via a standard camera feed,
+  analyzing key physiological indicators including Eye Aspect Ratio (EAR), head
+  pose estimation, and mouth state analysis (yawning detection) to provide timely
+  alerts for drowsiness and fatigue.
+keywords:
+  - drowsiness-detection
+  - driver-monitoring
+  - computer-vision
+  - deep-learning
+  - siamese-neural-networks
+  - facial-recognition
+  - eye-tracking
+  - real-time-detection
+  - opencv
+  - tensorflow
+  - keras
+  - safety-systems
+license: MIT
