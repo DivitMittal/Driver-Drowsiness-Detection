@@ -22,5 +22,8 @@ models/
 .venv
 ## RevealJS directory
 **/reveal*
-## Asciidoctor
-**/.asciidoc*
+
+## Tools
+.claude*
+Claude.md
+.mcp*
