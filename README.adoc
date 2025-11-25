@@ -6,6 +6,9 @@
 :source-highlighter: rouge
 :imagesdir: assets
 
+link:https://github.com/DivitMittal/Driver-Drowsiness-Detection/actions/workflows/flake-check.yml[image:https://github.com/DivitMittal/Driver-Drowsiness-Detection/actions/workflows/flake-check.yml/badge.svg[Flake Check]]
+link:https://github.com/DivitMittal/Driver-Drowsiness-Detection/actions/workflows/flake-lock-update.yml[image:https://github.com/DivitMittal/Driver-Drowsiness-Detection/actions/workflows/flake-lock-update.yml/badge.svg[Flake Lock Update]]
+
 == Overview
 
 Driver fatigue represents a significant risk factor in vehicular accidents globally. This project implements a real-time **Driver Drowsiness Detection** system designed to mitigate this risk by leveraging advanced computer vision techniques and deep learning, specifically employing **Siamese Neural Networks**. The system performs continuous monitoring of the driver's facial region via a standard camera feed, analyzing key physiological indicators associated with drowsiness to provide timely alerts.
