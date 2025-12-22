@@ -24,7 +24,7 @@ models/
 **/reveal*
 
 ## Tools
-.claude*
-Claude.md
-.mcp*
+.claude/
+AGENTS.md
 .serena*
+.mcp*
